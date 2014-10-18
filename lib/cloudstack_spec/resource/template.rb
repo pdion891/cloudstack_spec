@@ -1,25 +1,23 @@
-module CloudstackSpec
-  module Resource
+module CloudstackSpec::Resource
     class Template < Base
       # do nothing
-      	#@template = @connection.list_templates(:templatefilter => "all", "name"=> name)
+
       def exist?
-      	@template = @connection.list_templates(:templatefilter => "all", "name"=> name)
-      	unless @template['count'].nil?
-        	return true
-        else
-        	return false
+        begin
+          template = connection.list_templates(:templatefilter => "all", "name"=> name)
+          if template['count'].nil?
+            return false
+          else
+            return true
+          end
+        rescue Exception => e
+          return false
         end
       end
-      def ready?
-      	if zone.nil?
-      		if @template['template'].first['isready']  
-      			return true
-      		else
-      			return false
-      		end
-      	end
-      end
+      #def ready?
+      #	if zone.nil?
+      #		template = @connection.list_templates(:templatefilter => "all", "name"=> name)
+      #	return true
+      #end
     end
-  end
 end

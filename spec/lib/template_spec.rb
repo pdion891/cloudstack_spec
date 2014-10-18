@@ -34,8 +34,8 @@ require 'spec_helper'
   #it { should exist }
 #end
 
-describe template('CentOS 5.6(64-bit) no GUI (XenServer)') do
+describe template("CentOS 5.6(64-bit) no GUI (XenServer)") do
   it { should exist }
-  it { should be_ready }
+  #it { should be_ready }
 
 end

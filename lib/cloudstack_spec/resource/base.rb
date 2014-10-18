@@ -8,13 +8,14 @@ module CloudstackSpec
         @connection = connection
       end
       def name
+        #@name
         self.class.name.split('::').last[0...(-1 * 'Resource'.size)]
       end
 
 
-      def context_class
-        Contexts.const_get("#{name}Context")
-      end
+      #def context_class
+      #  Contexts.const_get("#{name}Context")
+      #end
 
       def connection
         configs     = YAML.load_file("spec/config.yml")
@@ -23,10 +24,14 @@ module CloudstackSpec
         _admin_port = configs['cloudstack']['admin_port']
         _api_key    = configs['cloudstack']['api_key']
         _secret_key = configs['cloudstack']['secret_key']
-        @client     = CloudstackRubyClient::Client.new \
+        @client     = CloudstackRubyClient::Client.new(
                       "http://#{_host}:#{_port}/client/api",
                       "#{_api_key}",
-                      "#{_secret_key}"
+                      "#{_secret_key}")
+      end
+
+      def version
+        connection.list_capabilities["capability"]["cloudstackversion"]
       end
     end
   end
