@@ -1,6 +1,11 @@
 # CloudstackSpec
 
-TODO: Write a gem description
+... In Progress...
+
+
+Rspec library based on [serverspec](http://serverspec.org/) for [Apache CloudStack](http://cloudstack.apache.org/) to test and validate CloudStack installation and configurations.
+
+
 
 ## Installation
 
