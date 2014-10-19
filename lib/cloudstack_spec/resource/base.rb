@@ -11,7 +11,7 @@ module CloudstackSpec::Resource
       type = self.class.name.split(':')[-1]
       type.gsub!(/([a-z\d])([A-Z])/, '\1 \2')
       type.capitalize!
-      %Q!#{type} "#{@name}"!
+      %Q!#{type}:"#{@name}"!
     end
   
     def inspect

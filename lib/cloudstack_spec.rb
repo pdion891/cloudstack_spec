@@ -1,6 +1,7 @@
 require "cloudstack_spec/version"
 require 'cloudstack_spec/resource'
 require 'cloudstack_spec/helper'
+require 'cloudstack_spec/matcher'
 require 'cloudstack_spec/resource/base'
 require 'rspec'
 
