@@ -3,11 +3,12 @@ require 'cloudstack_spec/resource'
 require 'cloudstack_spec/helper'
 require 'cloudstack_spec/matcher'
 require 'cloudstack_spec/resource/base'
+require 'rspec/its'
 require 'rspec'
 
 module CloudstackSpec
-  # Your code goes here...
 
+  #output the url + version under test
   client = CloudstackSpec::Helper::Api.new
   puts "Testing system:     #{client.url}"
   puts "CloudStack version: #{client.version}"

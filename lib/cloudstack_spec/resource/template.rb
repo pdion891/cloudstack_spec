@@ -7,16 +7,15 @@ module CloudstackSpec::Resource
     end
 
     def exist?
-      #begin
-        
+      begin  
         if tpl['count'].nil?
           return false
         else
           return true
         end
-      #rescue Exception => e
-      #  return false
-      #end
+      rescue Exception => e
+        return false
+      end
     end
 
     def ready?

@@ -1,3 +1,5 @@
+# If the zone is allocated (Enabled)
+
 RSpec::Matchers.define :be_allocated do |expected|
   match do |actual|
     actual.allocated? == true
@@ -8,10 +10,14 @@ RSpec::Matchers.define :be_allocated do |expected|
   end
  
   description do
-    "be enabled and ready to be use"
+    "be allocated (Enabled)"
   end
 
   failure_message_when_negated do |actual|
     "Status: #{actual}"
+  end
+
+  chain :with_level do |level|
+    @level = level
   end
 end

@@ -30,7 +30,7 @@ module CloudstackSpec::Resource
     end
 
     def allocated?
-      if @zone['allocationstate'] == 'Enable'
+      if @zone['allocationstate'] == 'Enabled'
         return true
       else
         return @zone['allocationstate']
@@ -39,8 +39,15 @@ module CloudstackSpec::Resource
 
     def local_storage
       return @zone['localstorageenabled']
-      #return "patate"
     end
 
+    def security_group
+      return @zone['securitygroupsenabled']
+    end
+
+    def network_type
+      # return "Basic" or "Advanced"
+      return @zone['networktype']
+    end
   end
 end
