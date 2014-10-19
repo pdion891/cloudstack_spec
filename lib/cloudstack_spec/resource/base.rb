@@ -5,6 +5,10 @@ module CloudstackSpec::Resource
     def initialize(name=nil)
       @name   = name
       @connection = CloudstackSpec::Helper::Api.new.connection
+
+      if self.class.name == "CloudstackSpec::Resource::Zone"
+        @zonename = this_zone(name)
+      end
     end
 
     def to_s
@@ -21,5 +25,17 @@ module CloudstackSpec::Resource
     def to_ary
       to_s.split(" ")
     end
+
+    def get_zone(zonename)
+      if zonename.nil?
+        zone = @connection.list_zones['zone'].first
+        #zonename = zonename['name']
+      else 
+        #zonename = zonename
+        zone = @connection.list_zones(:name => zonename)['zone'].first
+      end
+        return zone
+    end
+
   end
 end

@@ -2,7 +2,7 @@ module CloudstackSpec
   module Helper
     module Resource
       resources = %w(
-        base template zone
+        base template zone system_vm
       )
 
       resources.each {|resource| require "cloudstack_spec/resource/#{resource}" }

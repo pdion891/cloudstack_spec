@@ -1,5 +1,6 @@
 # GENERIC
-require 'cloudstack_spec/matcher/be_enabled'
+require 'cloudstack_spec/matcher/be_set'
+require 'cloudstack_spec/matcher/be_running'
 
 # ZONE
 require 'cloudstack_spec/matcher/be_allocated'

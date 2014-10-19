@@ -1,4 +1,4 @@
-RSpec::Matchers.define :be_enabled do
+RSpec::Matchers.define :be_set do
   match do |actual|
     actual == true
   end

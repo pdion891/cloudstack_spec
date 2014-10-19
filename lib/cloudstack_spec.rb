@@ -3,8 +3,10 @@ require 'cloudstack_spec/resource'
 require 'cloudstack_spec/helper'
 require 'cloudstack_spec/matcher'
 require 'cloudstack_spec/resource/base'
+require 'specinfra'
 require 'rspec/its'
 require 'rspec'
+
 
 module CloudstackSpec
 

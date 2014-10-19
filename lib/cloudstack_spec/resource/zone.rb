@@ -1,28 +1,10 @@
 module CloudstackSpec::Resource
   class Zone < Base
     # All about zone...
-    def initialize(name=nil)
-      @connection = CloudstackSpec::Helper::Api.new.connection
-      @zone = this_zone(name)
-    end
-
-    def this_zone(name)
-      if name.nil?
-        # if zone name not define, thake the first one
-        zone = @connection.list_zones['zone'].first
-        @name = zone['name']
-      else 
-        @name = name
-        zone = @connection.list_zones(:name => name)['zone'].first
-      end
-      return zone
-    end
-
     #####
-
     def exist?
       #zone = @connection.list_zone(:name => name)
-      if @zone.nil?
+      if @zonename.nil?
         return false
       else
         return true
@@ -30,24 +12,40 @@ module CloudstackSpec::Resource
     end
 
     def allocated?
-      if @zone['allocationstate'] == 'Enabled'
+      if @zonename['allocationstate'] == 'Enabled'
         return true
       else
-        return @zone['allocationstate']
+        return @zonename['allocationstate']
       end
     end
 
     def local_storage
-      return @zone['localstorageenabled']
+      return @zonename['localstorageenabled']
     end
 
     def security_group
-      return @zone['securitygroupsenabled']
+      return @zonename['securitygroupsenabled']
     end
 
     def network_type
       # return "Basic" or "Advanced"
-      return @zone['networktype']
+      return @zonename['networktype']
     end
+
+    private
+
+      def this_zone(name)
+        if name.nil?
+          # if zone name not define, thake the first one
+          zone = @connection.list_zones['zone'].first
+          @name = zone['name']
+        else 
+          @name = name
+          zone = @connection.list_zones(:name => name)['zone'].first
+        end
+        return zone
+      end
+
+    # end private
   end
 end

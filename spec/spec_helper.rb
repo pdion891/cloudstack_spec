@@ -10,6 +10,11 @@ require 'uuid'
 require 'cloudstack_spec'
 require 'rspec/expectations'
 
+require 'serverspec'
+#require 'specinfra'
+set :backend, :exec
+
+
 
 RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
