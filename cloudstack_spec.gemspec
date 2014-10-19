@@ -8,10 +8,10 @@ Gem::Specification.new do |spec|
   spec.version       = CloudstackSpec::VERSION
   spec.authors       = ["Pierre-Luc Dion"]
   spec.email         = ["pdion891@apache.org"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
-  spec.license       = "MIT"
+  spec.summary       = %q{RSpec tests for Apache CloudStack.}
+  spec.description   = %q{Servespec like tests for Apache CloudStack using Rspec.}
+  spec.homepage      = "https://github.com/pdion891/cloudstack_spec"
+  spec.license       = "Apache 2.0"
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_runtime_dependency "yaml"
+  spec.add_runtime_dependency "rspec-its"
   spec.add_runtime_dependency "uuid"
   spec.add_runtime_dependency "cloudstack_ruby_client"
 

@@ -17,6 +17,4 @@ def connection
                 "#{_secret_key}"
 end
 
-
-
-connection.list_capabilities["capability"]["cloudstackversion"]
+@connection = connection.list_capabilities["capability"]["cloudstackversion"]
