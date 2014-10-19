@@ -10,9 +10,10 @@ require 'uuid'
 require 'cloudstack_spec'
 require 'rspec/expectations'
 
+
 RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
-  config.filter_run :focus
+#  config.filter_run :focus
 
   # Run specs in random order to surface order dependencies. If you find an
   # order dependency and want to debug it, you can fix the order by providing
@@ -22,16 +23,3 @@ RSpec.configure do |config|
 
 end
 
-
-# def connection
-#   configs     = YAML.load_file("spec/config.yml")
-#   _host       = configs['cloudstack']['host']
-#   _port       = configs['cloudstack']['port']
-#   _admin_port = configs['cloudstack']['admin_port']
-#   _api_key    = configs['cloudstack']['api_key']
-#   _secret_key = configs['cloudstack']['secret_key']
-#   @client     = CloudstackRubyClient::Client.new \
-#                 "http://#{_host}:#{_port}/client/api",
-#                 "#{_api_key}",
-#                 "#{_secret_key}"
-# end

@@ -1,38 +1,25 @@
-module CloudstackSpec
-  module Resource
-    class Base
-      # do nothing
-      def initialize(name=nil)
-        @name   = name
-        #@runner = Specinfra::Runner
-        @connection = connection
-      end
-      def name
-        #@name
-        self.class.name.split('::').last[0...(-1 * 'Resource'.size)]
-      end
+module CloudstackSpec::Resource
+  class Base
+    attr_reader :name
 
+    def initialize(name=nil)
+      @name   = name
+      @connection = CloudstackSpec::Helper::Api.new.connection
+    end
 
-      #def context_class
-      #  Contexts.const_get("#{name}Context")
-      #end
-
-      def connection
-        configs     = YAML.load_file("spec/config.yml")
-        _host       = configs['cloudstack']['host']
-        _port       = configs['cloudstack']['port']
-        _admin_port = configs['cloudstack']['admin_port']
-        _api_key    = configs['cloudstack']['api_key']
-        _secret_key = configs['cloudstack']['secret_key']
-        @client     = CloudstackRubyClient::Client.new(
-                      "http://#{_host}:#{_port}/client/api",
-                      "#{_api_key}",
-                      "#{_secret_key}")
-      end
-
-      def version
-        connection.list_capabilities["capability"]["cloudstackversion"]
-      end
+    def to_s
+      type = self.class.name.split(':')[-1]
+      type.gsub!(/([a-z\d])([A-Z])/, '\1 \2')
+      type.capitalize!
+      %Q!#{type} "#{@name}"!
+    end
+  
+    def inspect
+      to_s
+    end
+  
+    def to_ary
+      to_s.split(" ")
     end
   end
 end
