@@ -3,7 +3,7 @@ require 'yaml'
 require 'cloudstack_ruby_client'
 require 'uuid'
 def connection
-  host =       'coe-preprod2-mgt02.lab.cloudops.local'
+  host =       '172.16.21.126'
   port =       '8080'
   api_key =    'IPACIPotOKxMphvegfgHXWLWjxNF5kbEe8EjdovqLkpJGy4VUnlFlEpjXShkn16vst2a8pevd8eF2DdxOIPO6w'
   secret_key = 'swlXavzGjbKyQxgeptSX_IzYXerjJPx_RYVa0plzlqB41PTCsjS_8ICAlmwz0hgZyRrw6WXVFLFcC2hUDUb9Fg'

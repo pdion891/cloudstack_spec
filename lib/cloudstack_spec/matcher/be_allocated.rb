@@ -1,17 +1,17 @@
 RSpec::Matchers.define :be_allocated do |expected|
   match do |actual|
-    actual.ready? == true
+    actual.allocated? == true
   end
 
   failure_message do |actual|
-    "template status: #{actual.ready?}"
+    "status: #{actual.allocated?}"
   end
  
   description do
-    "be ready"
+    "be enabled and ready to be use"
   end
 
-#  failure_message_when_negated do |actual|
-#    "template status: #{actual}"
-#  end
+  failure_message_when_negated do |actual|
+    "Status: #{actual}"
+  end
 end
