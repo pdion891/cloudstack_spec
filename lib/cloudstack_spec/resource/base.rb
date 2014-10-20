@@ -17,11 +17,11 @@ module CloudstackSpec::Resource
       #type.capitalize!
       %Q!#{type} "#{@name}"!
     end
-  
+
     def inspect
       to_s
     end
-  
+
     def to_ary
       to_s.split(" ")
     end

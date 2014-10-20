@@ -11,9 +11,9 @@ require 'rspec'
 module CloudstackSpec
 
   #output the url + version under test
-  client = CloudstackSpec::Helper::Api.new
-  puts "Testing system:     #{client.url}"
-  puts "CloudStack version: #{client.version}"
+  @client = CloudstackSpec::Helper::Api.new
+  puts "Testing system:     #{@client.url}"
+  puts "CloudStack version: #{@client.version}"
 
 end
 

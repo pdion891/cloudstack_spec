@@ -4,7 +4,7 @@ RSpec::Matchers.define :be_ready do |expected|
   end
 
   failure_message do |actual|
-    "template status: #{actual.ready?}"
+    "status: #{actual.ready?}"
   end
  
   description do
