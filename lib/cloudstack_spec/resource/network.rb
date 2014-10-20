@@ -11,10 +11,10 @@ module CloudstackSpec::Resource
 
     def exist?
       begin  
-        if network['count'].nil?
-          return false
-        else
+        if network.count >= 1
           return true
+        else
+          return false
         end
       rescue Exception => e
         return false
@@ -24,7 +24,7 @@ module CloudstackSpec::Resource
     def ready?
       #
       # verify the VR is running for this network and run the proper version.
-      vr = @connection.list_routers(:guestnetworkid => state = network["network"].first['id'])['router'].first
+      vr = @connection.list_routers(:guestnetworkid => state = network.first['id'])['router'].first
       if ! vr.nil?
         if vr['state'] == 'Running'
           if vr['version'] == @version
@@ -41,7 +41,7 @@ module CloudstackSpec::Resource
     end
 
     def create
-      if network['count'].nil?
+      if network.count >= 1
         offering_id = @connection.list_network_offerings(:name => "DefaultIsolatedNetworkOfferingWithSourceNatService")["networkoffering"].first['id']
         newnetwork = @connection.create_network(
                     :name => @name, 
@@ -56,8 +56,12 @@ module CloudstackSpec::Resource
 
     private
 
-      def network 
-        @connection.list_networks(:name => @name, zoneid: @zone['id'])
+
+      def network
+        # CloudStack API does not search by name for networks
+        networks = @connection.list_networks(zoneid: @zone['id'])['network']
+        networks = networks.select { |net| net['name'] == @name }
+#        @connection.list_networks(:name => @name, zoneid: @zone['id'])
       end
 
   end
