@@ -1,4 +1,4 @@
-RSpec::Matchers.define :be_ready do |expected|
+RSpec::Matchers.define :be_running do |expected|
   match do |actual|
     actual.running? == true
   end

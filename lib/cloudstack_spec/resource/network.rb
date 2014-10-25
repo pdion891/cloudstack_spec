@@ -61,7 +61,6 @@ module CloudstackSpec::Resource
         # CloudStack API does not search by name for networks
         networks = @connection.list_networks(zoneid: @zone['id'])['network']
         networks = networks.select { |net| net['name'] == @name }
-#        @connection.list_networks(:name => @name, zoneid: @zone['id'])
       end
 
   end

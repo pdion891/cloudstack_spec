@@ -39,7 +39,6 @@ module CloudstackSpec::Resource
       @runner.check_host_is_reachable(ip, port, proto, timeout)
     end
 
-
     def ready?
       if ! vm["count"].nil?
         state = vm["virtualmachine"].first["state"]
@@ -54,17 +53,58 @@ module CloudstackSpec::Resource
       end
     end
 
-    def created
+    def created?
+      # start the VM creation job
+      # Return {true/false}
+      if self.exist?
+        creation_job = "Already exist" 
+        puts "  #{creation_job}"
+        return false
+      end
       begin
         newvm = create_virtual_machine(@name)
-        uuid = newvm['jobid']
+        creation_job = newvm['jobid']
       rescue Exception => e
-        uuid = "vm creation fail with #{e.message}"
+        creation_job = "vm creation fail with #{e.message}"
       end
-      uuid
+      if UUID.validate(creation_job) == true
+        puts "  jobid: #{creation_job}"
+        return job_status?(creation_job)
+      else
+        puts "  #{creation_job}"
+        return false
+      end
     end
 
+    def destroy?
+      if self.exist?
+        job = @connection.destroy_virtual_machine(id: vm['virtualmachine'].first['id'], expunge: true)
+        job_status?(job['jobid'])
+      else
+        puts "  Does not exist"
+        return false
+      end
+    end
+
+
     private 
+
+      def job_status?(jobid)
+          job = @connection.query_async_job_result(jobid: jobid)
+#          jobstatus = job['jobstatus']        
+#        until jobstatus != 0
+        until job['jobstatus'] != 0
+          puts "  async job in progress..."
+          job = @connection.query_async_job_result(jobid: jobid)
+#          jobstatus = job['jobstatus']
+          sleep(5)
+        end
+        if job['jobresultcode'] == 0
+          return true
+        else
+          return false
+        end
+      end
 
       def vm
         @connection.list_virtual_machines(name: @name, zoneid: @zone['id'])
