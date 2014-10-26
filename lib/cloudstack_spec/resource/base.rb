@@ -26,7 +26,7 @@ module CloudstackSpec::Resource
       to_s.split(" ")
     end
 
-    def get_zone(zonename)
+    def get_zone(zonename=nil)
       if zonename.nil?
         zone = @connection.list_zones['zone'].first
         #zonename = zonename['name']
@@ -35,6 +35,21 @@ module CloudstackSpec::Resource
         zone = @connection.list_zones(:name => zonename)['zone'].first
       end
         return zone
+    end
+
+    def job_status?(jobid)
+        job = @connection.query_async_job_result(jobid: jobid)
+      until job['jobstatus'] != 0
+        puts "  async job in progress..."
+        job = @connection.query_async_job_result(jobid: jobid)
+        sleep(5)
+      end
+      if job['jobresultcode'] == 0
+        sleep(5)
+        return true
+      else
+        return false
+      end
     end
 
   end

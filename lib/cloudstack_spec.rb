@@ -14,6 +14,7 @@ module CloudstackSpec
   @client = CloudstackSpec::Helper::Api.new
   puts "Testing system:     #{@client.url}"
   puts "CloudStack version: #{@client.version}"
+  puts "executed at:        " + Time.now.to_s
 
 end
 

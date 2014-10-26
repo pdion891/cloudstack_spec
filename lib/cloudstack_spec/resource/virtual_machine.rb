@@ -1,7 +1,6 @@
 module CloudstackSpec::Resource
   class VirtualMachine < Base
     # do nothing
-    attr_reader :name
 
     def initialize(name='rspec-test1', zonename=nil)
       @name   = name
@@ -88,23 +87,6 @@ module CloudstackSpec::Resource
 
 
     private 
-
-      def job_status?(jobid)
-          job = @connection.query_async_job_result(jobid: jobid)
-#          jobstatus = job['jobstatus']        
-#        until jobstatus != 0
-        until job['jobstatus'] != 0
-          puts "  async job in progress..."
-          job = @connection.query_async_job_result(jobid: jobid)
-#          jobstatus = job['jobstatus']
-          sleep(5)
-        end
-        if job['jobresultcode'] == 0
-          return true
-        else
-          return false
-        end
-      end
 
       def vm
         @connection.list_virtual_machines(name: @name, zoneid: @zone['id'])
