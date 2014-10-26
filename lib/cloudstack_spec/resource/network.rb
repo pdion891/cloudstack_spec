@@ -26,6 +26,7 @@ module CloudstackSpec::Resource
 
     def exist?
 #      puts "vpc= #{@vpcname}, network name = #{@name}"
+      #puts CloudstackSpec::Resource::Vpc('patate').name
       begin  
         if network.count >= 1
           return true
