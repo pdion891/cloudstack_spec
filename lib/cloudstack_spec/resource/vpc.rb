@@ -75,8 +75,38 @@ module CloudstackSpec::Resource
       end
     end
 
+    def enable_remote_vpn
+      #public_ip = publicip_snat_id
+      newvpn =  @connection.create_remote_access_vpn(publicipid: publicip_snat_id)
+      job_status?(newvpn['jobid'])
+      vpn = @connection.list_remote_access_vpns(id: newvpn['id'])
+      vpn = vpn['remoteaccessvpn'].first
+      #puts vpn1
+      if ! vpn.empty?
+        return true
+      end
+    end
+
+    def remote_vpn_enabled?
+      a = @connection.list_remote_access_vpns(listall: true, publicipid: publicip_snat_id)
+      puts "    Pubic IP = #{a['remoteaccessvpn'].first['publicip']}"
+      puts "    PreShared Key = #{a['remoteaccessvpn'].first['presharedkey']}"
+      if a.empty?
+        false
+      else
+        true
+      end
+    end
+
 
     private 
+
+      def publicip_snat_id
+        # get the id of the sourceNAT public IP for the current VPC
+        public_ip = @connection.list_public_ip_addresses(vpcid: @vpc['id'], issourcenat: true)
+        public_ip = public_ip['publicipaddress'].first
+        return public_ip['id']
+      end
 
       def vpc_offering_id(offering_name="Default VPC offering")
         offering = @connection.list_vpc_offerings(name: offering_name)['vpcoffering'].first

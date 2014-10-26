@@ -8,5 +8,4 @@ end
 describe template('Ubuntu 14.04 LTS') do
   it { should exist }
   it { should be_ready }
-
 end
