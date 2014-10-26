@@ -1,15 +1,31 @@
 module CloudstackSpec::Resource
   class Network < Base
     # do nothing
-    def initialize(name=nil, zonename=nil)
+    attr_reader :vpcname, :zonename
+
+    def initialize(name='rspec-net1', vpcname=nil, zonename=nil)
       @name   = name
+      @vpcname = ""
       @connection = CloudstackSpec::Helper::Api.new.connection
       @version = CloudstackSpec::Helper::Api.new.version
       @zone = get_zone(zonename)
+      unless vpcname.nil?
+        vpc = @connection.list_vpcs(listall: true, name: vpcname)
+      end
+      if vpc.nil? || vpc.empty?
+        @vpc = nil
+      else
+        @vpc = vpc['vpc'].first
+        router = @connection.list_routers(vpcid: @vpc['id'])
+        if ! router.empty?
+          @router = router['router'].first
+        end
+      end
 #      @network = @connection.list_networks(:name => @name, zoneid: @zone['id'])
     end
 
     def exist?
+#      puts "vpc= #{@vpcname}, network name = #{@name}"
       begin  
         if network.count >= 1
           return true
@@ -59,7 +75,8 @@ module CloudstackSpec::Resource
 
       def network
         # CloudStack API does not search by name for networks
-        networks = @connection.list_networks(zoneid: @zone['id'])['network']
+#        networks = @connection.list_networks(zoneid: @zone['id'])['network']
+        networks = @connection.list_networks(:listall => true)['network']
         networks = networks.select { |net| net['name'] == @name }
       end
 
