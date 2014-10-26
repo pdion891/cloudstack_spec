@@ -11,8 +11,9 @@ describe vpc('patate') do
   it { should exist }
   it { should be_ready }
   it { should be_reachable }
-  its(:enable_remote_vpn) { should be_set }
-  its(:remote_vpn_enabled?) { should be }
+#  its(:enable_remote_vpn) { should be_set }
+#  its(:remote_vpn_enabled?) { should be }
+  its(:open_pf_ssh) { should be_set }
 
   describe network('tier41') do
     subject do

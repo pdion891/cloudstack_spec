@@ -71,6 +71,7 @@ module CloudstackSpec::Resource
       end
     end
 
+
     private
 
 

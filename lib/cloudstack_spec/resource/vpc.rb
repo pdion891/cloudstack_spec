@@ -98,8 +98,51 @@ module CloudstackSpec::Resource
       end
     end
 
+    def open_pf_ssh
+      port = 22
+      proto = 'tcp'
+      vmid = first_vm_id
+      if ! vmid
+        return false
+      end
+      new_rule = @connection.create_port_forwarding_rule(
+                    ipaddressid: publicip_id, 
+                    virtualmachineid: vmid,
+                    privateport: port,
+                    publicport: port,
+                    networkid: first_tier_id, 
+                    protocol: proto)
+      #return new_rule['ipaddress']
+      return true
+    end
 
-    private 
+    private
+
+      def first_vm_id
+        vm = @connection.list_virtual_machines(vpcid: @vpc['id'])
+        if vm.empty?
+          return false
+        end
+        vm['virtualmachine'].first['id']
+      end
+
+      def first_tier_id
+        net = @connection.list_vpcs(id: @vpc['id'])
+        net = net['vpc'].first['network'].first['id']
+        return net
+      end
+
+      def publicip_id
+        public_ip = @connection.list_public_ip_addresses(vpcid: @vpc['id'], issourcenat: false)
+        if public_ip['count'] < 1
+          puts "    Associating Public IP to VPC"
+          newip = @connection.associate_ip_address(vpcid: @vpc['id'])
+          sleep 5
+          public_ip = @connection.list_public_ip_addresses(vpcid: @vpc['id'], issourcenat: false)        
+        end
+        public_ip = public_ip['publicipaddress'].first
+        return public_ip['id']        
+      end
 
       def publicip_snat_id
         # get the id of the sourceNAT public IP for the current VPC
