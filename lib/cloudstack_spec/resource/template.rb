@@ -31,5 +31,6 @@ module CloudstackSpec::Resource
         #return false
       end
     end
+
   end
 end

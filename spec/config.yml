@@ -1,6 +1,6 @@
 cloudstack:
   host:       '172.16.21.126'
   port:       '8080'
-  api_key:    'IPACIPotOKxMphvegfgHXWLWjxNF5kbEe8EjdovqLkpJGy4VUnlFlEpjXShkn16vst2a8pevd8eF2DdxOIPO6w'
-  secret_key: 'swlXavzGjbKyQxgeptSX_IzYXerjJPx_RYVa0plzlqB41PTCsjS_8ICAlmwz0hgZyRrw6WXVFLFcC2hUDUb9Fg'
+  api_key:    'rkVsYauTGYkR2I0aX3Qmh4s3cfXtR5LNnw7cNKCpHnzKsA-zaXUn7k__fbBga-l0BQl9Qlmq57tkaj67L7W_bg'
+  secret_key: 'dS0grBtPMbg5PTr62VLeApd55p7sU5fObcW-hmGjiUNyBWw67BRPWRJrXQ5OfO0LTzLRdN-pHiDz25K1o3qLeA'
 

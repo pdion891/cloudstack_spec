@@ -39,11 +39,13 @@ module CloudstackSpec::Resource
 
     def job_status?(jobid)
         job = @connection.query_async_job_result(jobid: jobid)
+        print "  async job in progress..."
       until job['jobstatus'] != 0
-        puts "  async job in progress..."
+        print '.'
         job = @connection.query_async_job_result(jobid: jobid)
         sleep(5)
       end
+        puts ''
       if job['jobresultcode'] == 0
         sleep(5)
         return true

@@ -7,6 +7,7 @@ module CloudstackSpec::Resource
       @connection = CloudstackSpec::Helper::Api.new.connection
       @zone = get_zone(zonename)
       @runner = Specinfra::Runner
+
     end
 
     def exist?
@@ -89,7 +90,9 @@ module CloudstackSpec::Resource
     private 
 
       def vm
-        @connection.list_virtual_machines(name: @name, zoneid: @zone['id'])
+        vm = @connection.list_virtual_machines(name: @name, zoneid: @zone['id'])
+        $vm = vm['virtualmachine'].first
+        vm
       end
 
       def get_template_id(template_name=nil)
@@ -126,7 +129,7 @@ module CloudstackSpec::Resource
         end
       end
 
-      def create_virtual_machine(name='rspec-test1',network_name='rspec-test1',template_name=nil,offering_name=nil)
+      def create_virtual_machine(name='rspec-test1',network_name='tier11',template_name=nil,offering_name=nil)
         networkid = get_network_id(network_name)
 
         #templateid = @connection.list_templates(:templatefilter => "all", :name => template_name)['template'].first['id']

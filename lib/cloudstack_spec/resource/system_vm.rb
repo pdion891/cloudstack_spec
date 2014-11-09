@@ -35,6 +35,7 @@ module CloudstackSpec::Resource
     end
 
     def running?
+      puts $vm
       begin
         if @sysvm['state'] == 'Running'
           return true

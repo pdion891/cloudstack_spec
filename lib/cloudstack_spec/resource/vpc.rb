@@ -15,6 +15,7 @@ module CloudstackSpec::Resource
         @vpc = vpc['vpc'].first
         @router = @connection.list_routers(vpcid: @vpc['id'])['router'].first
       end
+      $vpc = @vpc
     end
     
     def exist?
@@ -45,6 +46,14 @@ module CloudstackSpec::Resource
       ip = @router['publicip']
       @runner.check_host_is_reachable(ip, port, proto, timeout)
     end
+
+#    def pf_open_check
+#      ip = @connection.list_public_ip_addresses(id: publicip_id)
+#      ip = ip['publicipaddress'].first
+#      ip = ip['ipaddress']
+#      timeout = nil
+#      @runner.check_host_is_reachable(ip, '22', 'tcp', timeout)
+#    end 
 
     def created?(cidr='10.10.0.0/22')
       if self.exist?
@@ -115,6 +124,7 @@ module CloudstackSpec::Resource
       #return new_rule['ipaddress']
       return true
     end
+  
 
     private
 
@@ -133,6 +143,7 @@ module CloudstackSpec::Resource
       end
 
       def publicip_id
+        # public ip not used for SourceNAT
         public_ip = @connection.list_public_ip_addresses(vpcid: @vpc['id'], issourcenat: false)
         if public_ip['count'] < 1
           puts "    Associating Public IP to VPC"

@@ -25,6 +25,7 @@ module CloudstackSpec::Resource
     end
 
     def exist?
+#      puts "vpc = #{$vpc}"
 #      puts "vpc= #{@vpcname}, network name = #{@name}"
       #puts CloudstackSpec::Resource::Vpc('patate').name
       begin  
