@@ -32,5 +32,10 @@ module CloudstackSpec::Resource
       end
     end
 
+    def create_from_vm(origin_vm)
+      origin_vm
+    end
+
+
   end
 end

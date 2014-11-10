@@ -47,14 +47,6 @@ module CloudstackSpec::Resource
       @runner.check_host_is_reachable(ip, port, proto, timeout)
     end
 
-#    def pf_open_check
-#      ip = @connection.list_public_ip_addresses(id: publicip_id)
-#      ip = ip['publicipaddress'].first
-#      ip = ip['ipaddress']
-#      timeout = nil
-#      @runner.check_host_is_reachable(ip, '22', 'tcp', timeout)
-#    end 
-
     def created?(cidr='10.10.0.0/22')
       if self.exist?
         puts "  VPC already exist"
@@ -121,7 +113,6 @@ module CloudstackSpec::Resource
                     publicport: port,
                     networkid: first_tier_id, 
                     protocol: proto)
-      #return new_rule['ipaddress']
       return true
     end
   

@@ -1,9 +1,11 @@
 module CloudstackSpec::Resource
   class VirtualMachine < Base
     # do nothing
+    attr_reader :name, :template_name, :zonename
 
     def initialize(name='rspec-test1', zonename=nil)
       @name   = name
+      @template_name = ''
       @connection = CloudstackSpec::Helper::Api.new.connection
       @zone = get_zone(zonename)
       @runner = Specinfra::Runner
@@ -95,11 +97,11 @@ module CloudstackSpec::Resource
         vm
       end
 
-      def get_template_id(template_name=nil)
-        if template_name.nil?
+      def get_template_id
+        if self.template_name.nil?
           tpl = @connection.list_templates(:templatefilter => "featured", :zoneid => @zone['id'])
         else
-          tpl = @connection.list_templates(:name => template_name, :templatefilter => "featured", :zoneid => @zone['id'])
+          tpl = @connection.list_templates(:name => self.template_name, :templatefilter => "all", :zoneid => @zone['id'])
         end
         if ! tpl.empty?
           tpl = tpl['template'].first['id']
@@ -129,10 +131,9 @@ module CloudstackSpec::Resource
         end
       end
 
-      def create_virtual_machine(name='rspec-test1',network_name='tier11',template_name=nil,offering_name=nil)
+      def create_virtual_machine(name='rspec-test1',network_name='tier11',offering_name=nil)
         networkid = get_network_id(network_name)
 
-        #templateid = @connection.list_templates(:templatefilter => "all", :name => template_name)['template'].first['id']
         jobid = @connection.deploy_virtual_machine(
                         zoneid: @zone['id'],
                         serviceofferingid: get_systemoffering_id,

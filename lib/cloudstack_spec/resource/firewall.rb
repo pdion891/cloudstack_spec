@@ -16,7 +16,7 @@ module CloudstackSpec::Resource
         @router = @connection.list_routers(vpcid: @vpc['id'])['router'].first
       end
     end
-    
+
     def exist?
         if @vpc.nil?
           return false

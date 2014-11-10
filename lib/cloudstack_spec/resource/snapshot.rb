@@ -21,11 +21,11 @@ module CloudstackSpec::Resource
   def created?
     # start the VM creation job
     # Return {true/false}
-    if self.exist?
-      creation_job = "Already exist" 
-      puts "    #{creation_job}"
-      return false
-    end
+    #if self.exist?
+    #  creation_job = "Already exist" 
+    #  puts "    #{creation_job}"
+    #  return false
+    #end
     begin
       newsnap = @connection.create_snapshot(volumeid: get_volume_id)
       creation_job = newsnap['jobid']
@@ -41,9 +41,6 @@ module CloudstackSpec::Resource
     end
   end
 
-  def create_template
-    
-  end
 
   private
     def get_volume_id

@@ -29,8 +29,8 @@ end
 describe vpc('spec-vpc1') do
 #  it { should be_created }
   it { should exist }
-  it { should be_ready }
-#  it { should be_reachable }
+#  it { should be_ready }
+  it { should be_reachable }
 #  its(:enable_remote_vpn) { should be_set }
   its(:remote_vpn_enabled?) { should be }
 
@@ -46,15 +46,32 @@ describe vpc('spec-vpc1') do
 
   describe virtual_machine('bling-bling1') do
 #    it { should be_created }
-    describe snapshot do
-      it { should be_created }
-      it { should exist }
-    end
+ #   describe snapshot do
+ #     it { should be_created }
+ #     it { should exist }
+ #   end
     it { should be_running }
   #  it { should be_destroy }
   end
 
-  its(:open_pf_ssh) { should be_set }
-#  its(:pf_open_check) { should be_reachable }
 
+  #  its(:open_pf_ssh) { should be_set }
+  #  its(:pf_open_check) { should be_reachable }
 end
+
+#describe template_from_snapshot('bling-bling1') do
+  #it { should be_created }
+#end
+
+describe virtual_machine('bling-bling2') do
+  subject do
+    vm_from_template = CloudstackSpec::Resource::VirtualMachine.new('bling-bling2')
+    vm_from_template.template_name << 'bling-bling1'
+    vm_from_template
+  end
+  it { should be_created }
+end
+
+
+
+
