@@ -11,7 +11,7 @@ module CloudstackSpec::Resource
 
     def exist?
       begin  
-        if get_tier.count >= 1
+        if !get_tier.empty?
           return true
         else
           return false
@@ -34,13 +34,15 @@ module CloudstackSpec::Resource
                     :aclid => get_acl_id
                    )
       else
-        print "already exist"
+        print "  already exist"
+        return true
         #return false
       end
     end
 
     def destroy?
       if self.exist?
+        sleep(5)
         job = @connection.delete_network(id: get_tier['id'])
         job_status?(job['jobid'])
       else
@@ -59,7 +61,8 @@ module CloudstackSpec::Resource
         if networks.nil?
           return {}
         else
-          networks = networks.select { |net| net['name'] == @name }
+          network = networks.select { |net| net['name'] == @name }
+          network = network.first
         end
       end
 

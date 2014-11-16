@@ -13,7 +13,7 @@ module CloudstackSpec::Resource
 
     def exist?
       begin  
-        if vm['count'].nil?
+        if vm.empty?
           return false
         else
           return true
@@ -25,7 +25,7 @@ module CloudstackSpec::Resource
 
     def running?
       begin
-        if vm['virtualmachine'].first['state'] == 'Running'
+        if vm['state'] == 'Running'
           return true
         else
           return false
@@ -36,22 +36,15 @@ module CloudstackSpec::Resource
     end
 
     def reachable?(port, proto, timeout)
-      ip = vm['virtualmachine'].first['nic'].first['ipaddress']
-      @runner.check_host_is_reachable(ip, port, proto, timeout)
-    end
-
-    def ready?
-      if ! vm["count"].nil?
-        state = vm["virtualmachine"].first["state"]
-        if state
-          return true
-        else
-          return tpl["template"].first["status"]
-        end
+      pf_rule = get_pf_rule
+      if pf_rule.empty?
+        ip = vm['nic'].first['ipaddress']
       else
-        return "#{name}: not found"
-        #return false
+        ip = pf_rule['ipaddress']
+        port = pf_rule['publicport']
+        proto = pf_rule['protocol']
       end
+      @runner.check_host_is_reachable(ip, port, proto, timeout)
     end
 
     def created?
@@ -69,7 +62,6 @@ module CloudstackSpec::Resource
         creation_job = "vm creation fail with #{exception.message}"
       end
       if UUID.validate(creation_job) == true
-        #puts "  jobid: #{creation_job}"
         return job_status?(creation_job)
       else
         puts "  #{creation_job}"
@@ -79,7 +71,7 @@ module CloudstackSpec::Resource
 
     def destroy?
       if self.exist?
-        job = @connection.destroy_virtual_machine(id: vm['virtualmachine'].first['id'], expunge: true)
+        job = @connection.destroy_virtual_machine(id: vm['id'], expunge: true)
         job_status?(job['jobid'])
       else
         puts "  Does not exist"
@@ -91,24 +83,34 @@ module CloudstackSpec::Resource
       # open port forwarding for ssh (tcp:22)
       port = 22
       proto = 'tcp'
-      new_rule = @connection.create_port_forwarding_rule(
+      sleep(5)  # give move time to the vm to complete booting.
+      if get_pf_rule.empty?
+        new_rule = @connection.create_port_forwarding_rule(
                     ipaddressid: publicip_id, 
-                    virtualmachineid: $vm['id'],
+                    virtualmachineid: vm['id'],
                     privateport: port,
                     publicport: port,
-                    networkid: $vm['nic'].first['networkid'], 
+                    networkid: vm['nic'].first['networkid'], 
                     protocol: proto )
+      else
+        #puts "      Port Forwarging rule already exist"
+      end
       return true
+
     end
 
-    
 
     private 
 
       def vm
         vm = @connection.list_virtual_machines(name: @name, zoneid: @zone['id'])
-        $vm = vm['virtualmachine'].first
-        vm
+        if vm.empty?
+          $vm = {}
+          return {}
+        else
+          $vm = vm['virtualmachine'].first
+          return vm['virtualmachine'].first
+        end
       end
 
       def get_template_id
@@ -128,6 +130,7 @@ module CloudstackSpec::Resource
       def get_network_id(network_name)
         # CloudStack API does not search by name for networks
         networks = @connection.list_networks(zoneid: @zone['id'])['network']
+        return "NO NETWORK FOUND" if networks.nil?
         networks = networks.select { |net| net['name'] == network_name }
         return networks.first['id']
       end
@@ -147,7 +150,7 @@ module CloudstackSpec::Resource
 
       def create_virtual_machine(name='rspec-test1',network_name='tier11',offering_name=nil)
         networkid = get_network_id(network_name)
-          jobid = @connection.deploy_virtual_machine(
+        jobid = @connection.deploy_virtual_machine(
                         zoneid: @zone['id'],
                         serviceofferingid: get_systemoffering_id,
                         templateid: get_template_id,
@@ -168,6 +171,18 @@ module CloudstackSpec::Resource
         end
         public_ip = public_ip['publicipaddress'].first
         return public_ip['id']        
+      end
+
+      def get_pf_rule
+        # retrieve Port Forwarding Rule for the VM if it exist
+        pf_rules = @connection.list_port_forwarding_rules
+        pf_rules = pf_rules['portforwardingrule']
+        if pf_rules.nil?
+          return {}
+        else
+          pf_rule = pf_rules.select { |rule| rule['virtualmachineid'] == vm['id'] }
+          pf_rule.first
+        end
       end
 
   end

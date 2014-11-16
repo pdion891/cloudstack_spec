@@ -7,19 +7,17 @@ module CloudstackSpec::Resource
       @connection = CloudstackSpec::Helper::Api.new.connection
       @zone = get_zone(zonename)
       @runner = Specinfra::Runner
-      vpc = @connection.list_vpcs(listall: true, name: @name)
+      #vpc = @connection.list_vpcs(listall: true, name: @name)
       if vpc.empty?
-        @vpc = nil
         @router = nil
       else
-        @vpc = vpc['vpc'].first
-        @router = @connection.list_routers(vpcid: @vpc['id'])['router'].first
+        @router = @connection.list_routers(vpcid: vpc['id'])['router'].first
       end
-      $vpc = @vpc
+      $vpc = vpc
     end
     
     def exist?
-        if @vpc.nil?
+        if vpc.empty?
           return false
         else
           return true
@@ -50,7 +48,7 @@ module CloudstackSpec::Resource
     def created?(cidr='10.10.0.0/22')
       if self.exist?
         puts "  VPC already exist"
-        return false
+        return true
       else
         job = @connection.create_vpc(
                 :name => @name,
@@ -60,17 +58,17 @@ module CloudstackSpec::Resource
                 :zoneid => @zone['id']
                 )
         job_status = job_status?(job['jobid'])
-        @vpc = @connection.list_vpcs(listall: true, name: @name)['vpc'].first
-        @router = @connection.list_routers(vpcid: @vpc['id'])['router'].first
-        $vpc = @vpc
+        @router = @connection.list_routers(vpcid: vpc['id'])['router'].first
+        $vpc = vpc
         return job_status
 
       end
     end
 
     def destroy?
+      sleep(5)
       if self.exist?
-        job = @connection.delete_vpc(id: @vpc['id'])
+        job = @connection.delete_vpc(id: vpc['id'])
         return job_status?(job['jobid'])
       else
         puts "  Does not exist"
@@ -102,8 +100,17 @@ module CloudstackSpec::Resource
 
     private
 
+      def vpc
+        vpc = @connection.list_vpcs(listall: true, name: @name)
+        if vpc.empty?
+          return {}
+        else
+          return vpc['vpc'].first
+        end
+      end
+
       def first_vm_id
-        vm = @connection.list_virtual_machines(vpcid: @vpc['id'])
+        vm = @connection.list_virtual_machines(vpcid: vpc['id'])
         if vm.empty?
           return false
         end
@@ -111,14 +118,14 @@ module CloudstackSpec::Resource
       end
 
       def first_tier_id
-        net = @connection.list_vpcs(id: @vpc['id'])
+        net = @connection.list_vpcs(id: vpc['id'])
         net = net['vpc'].first['network'].first['id']
         return net
       end
 
       def publicip_snat_id
         # get the id of the sourceNAT public IP for the current VPC
-        public_ip = @connection.list_public_ip_addresses(vpcid: @vpc['id'], issourcenat: true)
+        public_ip = @connection.list_public_ip_addresses(vpcid: vpc['id'], issourcenat: true)
         public_ip = public_ip['publicipaddress'].first
         return public_ip['id']
       end
