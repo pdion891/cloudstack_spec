@@ -1,30 +1,31 @@
 require 'spec_helper'
 
-describe network("test1") do
+describe network("priv_net1") do
   it { should exist }
   it { should be_ready }
 end
 
 
-describe vpc('patate') do
 
-  it { should exist }
-  it { should be_ready }
-  it { should be_reachable }
-#  its(:enable_remote_vpn) { should be_set }
-#  its(:remote_vpn_enabled?) { should be }
-  its(:open_pf_ssh) { should be_set }
-
-  describe network('tier41') do
-    subject do
-      network = CloudstackSpec::Resource::Network.new('tier41')
-      network.vpcname << 'patate'
-      network
-    end
-    it { should exist }
-  end
-
-end
+# describe vpc('patate') do
+# 
+#   it { should exist }
+#   it { should be_ready }
+#   it { should be_reachable }
+# #  its(:enable_remote_vpn) { should be_set }
+# #  its(:remote_vpn_enabled?) { should be }
+#   its(:open_pf_ssh) { should be_set }
+# 
+#   describe network('tier41') do
+#     subject do
+#       network = CloudstackSpec::Resource::Network.new('tier41')
+#       network.vpcname << 'patate'
+#       network
+#     end
+#     it { should exist }
+#   end
+# 
+# end
 
 #  describe network('tier41') do
 #    it { should exist }
