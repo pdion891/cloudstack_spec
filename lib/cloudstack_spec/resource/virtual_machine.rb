@@ -9,7 +9,6 @@ module CloudstackSpec::Resource
       @connection = CloudstackSpec::Helper::Api.new.connection
       @zone = get_zone(zonename)
       @runner = Specinfra::Runner
-
     end
 
     def exist?
@@ -66,11 +65,11 @@ module CloudstackSpec::Resource
       begin
         newvm = create_virtual_machine(@name)
         creation_job = newvm['jobid']
-      rescue Exception => e
-        creation_job = "vm creation fail with #{e.message}"
+      rescue Exception => exception
+        creation_job = "vm creation fail with #{exception.message}"
       end
       if UUID.validate(creation_job) == true
-        puts "  jobid: #{creation_job}"
+        #puts "  jobid: #{creation_job}"
         return job_status?(creation_job)
       else
         puts "  #{creation_job}"
@@ -88,6 +87,21 @@ module CloudstackSpec::Resource
       end
     end
 
+    def open_pf_ssh
+      # open port forwarding for ssh (tcp:22)
+      port = 22
+      proto = 'tcp'
+      new_rule = @connection.create_port_forwarding_rule(
+                    ipaddressid: publicip_id, 
+                    virtualmachineid: $vm['id'],
+                    privateport: port,
+                    publicport: port,
+                    networkid: $vm['nic'].first['networkid'], 
+                    protocol: proto )
+      return true
+    end
+
+    
 
     private 
 
@@ -98,7 +112,7 @@ module CloudstackSpec::Resource
       end
 
       def get_template_id
-        if self.template_name.nil?
+        if self.template_name.empty?
           tpl = @connection.list_templates(:templatefilter => "featured", :zoneid => @zone['id'])
         else
           tpl = @connection.list_templates(:name => self.template_name, :templatefilter => "all", :zoneid => @zone['id'])
@@ -107,7 +121,7 @@ module CloudstackSpec::Resource
           tpl = tpl['template'].first['id']
           return tpl
         else
-          return ''
+          return 'no featured template found'
         end
       end
 
@@ -133,8 +147,7 @@ module CloudstackSpec::Resource
 
       def create_virtual_machine(name='rspec-test1',network_name='tier11',offering_name=nil)
         networkid = get_network_id(network_name)
-
-        jobid = @connection.deploy_virtual_machine(
+          jobid = @connection.deploy_virtual_machine(
                         zoneid: @zone['id'],
                         serviceofferingid: get_systemoffering_id,
                         templateid: get_template_id,
@@ -142,7 +155,19 @@ module CloudstackSpec::Resource
                         displayname: name,
                         networkids: networkid
                       )
+      end
 
+      def publicip_id
+        # public ip not used for SourceNAT
+        public_ip = @connection.list_public_ip_addresses(vpcid: $vpc['id'], issourcenat: false)
+        if public_ip.empty?
+          puts "    Associating Public IP to VPC"
+          newip = @connection.associate_ip_address(vpcid: $vpc['id'])
+          sleep 5
+          public_ip = @connection.list_public_ip_addresses(vpcid: $vpc['id'], issourcenat: false)        
+        end
+        public_ip = public_ip['publicipaddress'].first
+        return public_ip['id']        
       end
 
   end

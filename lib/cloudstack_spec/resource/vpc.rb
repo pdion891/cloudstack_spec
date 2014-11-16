@@ -62,7 +62,9 @@ module CloudstackSpec::Resource
         job_status = job_status?(job['jobid'])
         @vpc = @connection.list_vpcs(listall: true, name: @name)['vpc'].first
         @router = @connection.list_routers(vpcid: @vpc['id'])['router'].first
+        $vpc = @vpc
         return job_status
+
       end
     end
 
@@ -77,12 +79,10 @@ module CloudstackSpec::Resource
     end
 
     def enable_remote_vpn
-      #public_ip = publicip_snat_id
       newvpn =  @connection.create_remote_access_vpn(publicipid: publicip_snat_id)
       job_status?(newvpn['jobid'])
       vpn = @connection.list_remote_access_vpns(id: newvpn['id'])
       vpn = vpn['remoteaccessvpn'].first
-      #puts vpn1
       if ! vpn.empty?
         return true
       end
@@ -90,32 +90,15 @@ module CloudstackSpec::Resource
 
     def remote_vpn_enabled?
       a = @connection.list_remote_access_vpns(listall: true, publicipid: publicip_snat_id)
-      puts "    Pubic IP = #{a['remoteaccessvpn'].first['publicip']}"
-      puts "    PreShared Key = #{a['remoteaccessvpn'].first['presharedkey']}"
       if a.empty?
         false
       else
+        puts "    Pubic IP = #{a['remoteaccessvpn'].first['publicip']}"
+        puts "    PreShared Key = #{a['remoteaccessvpn'].first['presharedkey']}"
         true
       end
     end
 
-    def open_pf_ssh
-      port = 22
-      proto = 'tcp'
-      vmid = first_vm_id
-      if ! vmid
-        return false
-      end
-      new_rule = @connection.create_port_forwarding_rule(
-                    ipaddressid: publicip_id, 
-                    virtualmachineid: vmid,
-                    privateport: port,
-                    publicport: port,
-                    networkid: first_tier_id, 
-                    protocol: proto)
-      return true
-    end
-  
 
     private
 
@@ -131,19 +114,6 @@ module CloudstackSpec::Resource
         net = @connection.list_vpcs(id: @vpc['id'])
         net = net['vpc'].first['network'].first['id']
         return net
-      end
-
-      def publicip_id
-        # public ip not used for SourceNAT
-        public_ip = @connection.list_public_ip_addresses(vpcid: @vpc['id'], issourcenat: false)
-        if public_ip['count'] < 1
-          puts "    Associating Public IP to VPC"
-          newip = @connection.associate_ip_address(vpcid: @vpc['id'])
-          sleep 5
-          public_ip = @connection.list_public_ip_addresses(vpcid: @vpc['id'], issourcenat: false)        
-        end
-        public_ip = public_ip['publicipaddress'].first
-        return public_ip['id']        
       end
 
       def publicip_snat_id
