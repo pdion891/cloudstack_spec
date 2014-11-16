@@ -48,8 +48,8 @@ module CloudstackSpec::Resource
           creation_job = new_template['jobid']
         end
       end
-      
     end
+
 
     private
 
