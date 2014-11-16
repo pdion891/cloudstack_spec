@@ -64,7 +64,7 @@ module CloudstackSpec::Resource
       end
 
       def get_offering_id
-        offering = @connection.list_network_offerings(:name => "DefaultIsolatedNetworkOfferingForVpcNetworksWithInternalLB")
+        offering = @connection.list_network_offerings(:name => "DefaultIsolatedNetworkOfferingForVpcNetworks")
         offering = offering["networkoffering"].first
         return offering['id']
       end
