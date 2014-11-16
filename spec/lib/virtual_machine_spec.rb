@@ -10,14 +10,15 @@ describe zone do
 end
 
 
-describe virtual_machine('test1') do
-  it { should exist }
-  it { should be_running }
-  it { should_not be_reachable }
-end
+#describe virtual_machine('test1') do
+#  it { should exist }
+#  it { should be_running }
+#  it { should_not be_reachable }
+#end
 
 describe virtual_machine('bling-bling1') do
-#  it { should be_created }
+  it { should be_created }
   it { should be_running }
-  it { should be_destroy }
+  it { should_not be_reachable }
+#  it { should be_destroy }
 end
