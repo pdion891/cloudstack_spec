@@ -43,9 +43,9 @@ module CloudstackSpec::Resource
     end
 
     def registerUserKeys
-      keys = @connection.register_user_keys(id: user_id)
-      puts "      apikey    = #{keys["userkeys"]['apikey']}"
-      puts "      secretkey = #{keys["userkeys"]['secretkey']}"
+      keys = user_keys
+      puts "      apikey    = #{keys['apikey']}"
+      puts "      secretkey = #{keys['secretkey']}"
       return true
     end
 
@@ -69,6 +69,22 @@ module CloudstackSpec::Resource
           return ""
         else
           return account['account'].first['id']
+        end
+      end
+
+      def user_keys
+        user = account
+        if user.empty?
+          return ''
+        else
+          user = user['user'].first
+          if user['apikey'].nil? or user['apikey'].empty?
+            keys = @connection.register_user_keys(id: user_id)
+            keys = keys['userkeys']
+          else
+            keys = {'apikey' => user['apikey'], 'secretkey' => user['secretkey']}
+          end
+          return keys
         end
       end
 

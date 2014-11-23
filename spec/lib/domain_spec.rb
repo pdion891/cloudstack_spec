@@ -11,5 +11,10 @@ describe domain("test44") do
     its(:registerUserKeys) { should be_set }
   end
 
+  describe project('x') do
+    it { should be_created }
+    it { should exist }
+  end
+
 end
 
