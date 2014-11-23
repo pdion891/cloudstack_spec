@@ -2,6 +2,13 @@ module CloudstackSpec::Resource
   class Domain < Base
     # handle domain objects.
 
+    def initialize(name=nil)
+      @name   = name
+      @connection = CloudstackSpec::Helper::Api.new.connection
+
+      $domainid = domain_id
+    end
+
     def exist?
       begin
         if domain.empty?
@@ -20,6 +27,7 @@ module CloudstackSpec::Resource
         return true
       else
         domain = @connection.create_domain(name: @name)
+        $domainid = domain_id
       end
     end
 
@@ -50,9 +58,10 @@ module CloudstackSpec::Resource
 
       def domain_id
         domain = @connection.list_domains(listall: true, name: @name)
-        if domain.nil?
+        if domain.nil? || domain.empty?
           return ""
         else
+          domain['domain'].first['id']
           return domain['domain'].first['id']
         end
       end
