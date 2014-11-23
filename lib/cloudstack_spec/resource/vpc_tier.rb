@@ -2,7 +2,7 @@ module CloudstackSpec::Resource
   class VpcTier < Base
     attr_reader :name
 
-    def initialize(name='tier1', zonename=nil)
+    def initialize(name='tier11', zonename=nil)
       @name   = name
       @connection = CloudstackSpec::Helper::Api.new.connection
       @zone = get_zone(zonename)
