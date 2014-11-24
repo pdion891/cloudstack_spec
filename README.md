@@ -7,6 +7,29 @@
 
 ## Installation
 
+install as gem:
+
+    $ gem install cloudstack_spec
+
+Create a test repo folder:
+  
+  $ mkdir my_cloudstack_spec
+  $ cd my_cloudstack_spec
+
+Initialize cloudstack_spec:
+
+  $ cloudstackspec-init
+  Create base for cloudstack_spec? y/n: y
+   + spec/
+   + spec/lib/
+   + spec/config.yml
+   + spec/lib/001_zone_spec.rb
+   + spec/spec_helper.rb
+  Make sure to Update file: spec/config.yml
+  $
+
+or 
+
 clone this repo:
 
   $ git clone https://github.com/pdion891/cloudstack_spec.git
@@ -54,12 +77,14 @@ end
 
 ### Execute test run
 
+Simply run ``rspec`` or define test case file as follow:
+
 ```bash
 rspec spec/lib/[test_scenario]_spec.rb
 
 #ex:
 
-rspec spec/lib/1_zone_spec.rb
+rspec spec/lib/001_zone_spec.rb
 ```
 
 Output example:
