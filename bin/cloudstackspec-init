@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-$LOAD_PATH.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), *%w[.. lib/cloudstack_spec/setup])
 
-require 'cloudstack_spec'
+require 'cloudstack_spec/setup'
 
 CloudstackSpec::Setup.run

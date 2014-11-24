@@ -1,7 +1,7 @@
 require 'fileutils'
 require 'erb'
 
-module Configspec
+module CloudstackSpec
   class Setup
     def self.run
 
@@ -16,7 +16,8 @@ module Configspec
         safe_create_config
         safe_create_spec
         safe_create_spec_helper
-        safe_create_rakefile
+#        safe_create_rakefile
+        puts "Make sure to Update file: spec/config.yml"
       else
         exit
       end
@@ -24,7 +25,7 @@ module Configspec
 
     def self.safe_create_config
       # create config.yml file.
-      content = << -EOF
+      content = <<-EOF
 cloudstack:
   url:        http://127.0.0.1:8080/client/api
   api_key:    c0dD7KjmFF4ixekZyQZJa7xPrW6y5-egZU1FGqq2u0DITs1qSluyP3giLDJ2msg0y1gPeARq4ZyvK-j48QP8hQ
@@ -109,13 +110,32 @@ EOF
     end
 
     def self.safe_create_rakefile
-      content = <<-'EOF'
+      content = <<-EOF
 require 'rake'
 require 'rspec/core/rake_task'
 
-RSpec::Core::RakeTask.new(:spec) do |t|
-  t.pattern = 'spec/*/*_spec.rb'
+task :spec    => 'spec:all'
+task :default => :spec
+
+namespace :spec do
+  targets = []
+  Dir.glob('./spec/*').each do |dir|
+    next unless File.directory?(dir)
+    targets << File.basename(dir)
+  end
+
+  task :all     => targets
+  task :default => :all
+
+  targets.each do |target|
+    desc "Run serverspec tests to #{target}"
+    RSpec::Core::RakeTask.new(target.to_sym) do |t|
+      ENV['TARGET_HOST'] = target
+      t.pattern = "spec/#{target}/*_spec.rb"
+    end
+  end
 end
+
 EOF
       if File.exists? 'Rakefile'
         old_content = File.read('Rakefile')
@@ -166,5 +186,6 @@ end
 EOF
       template
     end
+
   end
 end
