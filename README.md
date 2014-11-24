@@ -13,27 +13,27 @@ install as gem:
 
 Create a test repo folder:
   
-  $ mkdir my_cloudstack_spec
-  $ cd my_cloudstack_spec
+    $ mkdir my_cloudstack_spec
+    $ cd my_cloudstack_spec
 
 Initialize cloudstack_spec:
 
-  $ cloudstackspec-init
-  Create base for cloudstack_spec? y/n: y
-   + spec/
-   + spec/lib/
-   + spec/config.yml
-   + spec/lib/001_zone_spec.rb
-   + spec/spec_helper.rb
-  Make sure to Update file: spec/config.yml
-  $
+    $ cloudstackspec-init
+    Create base for cloudstack_spec? y/n: y
+     + spec/
+     + spec/lib/
+     + spec/config.yml
+     + spec/lib/001_zone_spec.rb
+     + spec/spec_helper.rb
+    Make sure to Update file: spec/config.yml
+    $
 
-or 
+or
 
-clone this repo:
+Clone this repo:
 
-  $ git clone https://github.com/pdion891/cloudstack_spec.git
-  $ cd cloudstack_spec
+    $ git clone https://github.com/pdion891/cloudstack_spec.git
+    $ cd cloudstack_spec
 
 
 ## Configuration
@@ -50,7 +50,7 @@ cloudstack:
 
 ## Usage
 
-create test file in ``spec/lib/[test]_spec.rb`` as example in the directory.
+Create test definition file in ``spec/lib/[test]_spec.rb`` as example in the directory.
 
 ### test example
 
