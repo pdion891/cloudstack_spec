@@ -19,9 +19,10 @@ module CloudstackSpec::Resource
         puts "  Project already exist"
         return true
       else
-        account = @connection.create_project(
+        project = @connection.create_project(
           displaytext: @name,
           name: @name)
+        job_status?(project['jobid'])
       end
     end
 
@@ -35,13 +36,6 @@ module CloudstackSpec::Resource
         return false
       end
 
-    end
-
-    def registerUserKeys
-      keys = @connection.register_user_keys(id: user_id)
-      puts "      apikey    = #{keys["userkeys"]['apikey']}"
-      puts "      secretkey = #{keys["userkeys"]['secretkey']}"
-      return true
     end
 
 

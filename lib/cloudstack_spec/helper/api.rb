@@ -14,6 +14,19 @@ module CloudstackSpec::Helper
                     _use_ssl)
     end
   
+    def connection2
+      configs     = YAML.load_file("spec/config.yml")
+      _url        = configs['cloudstack']['url']
+      _use_ssl    = configs['cloudstack']['use_ssl']
+      _api_key    = $api_key
+      _secret_key = $secret_key
+      @client     = CloudstackRubyClient::Client.new(
+                    "#{_url}",
+                    "#{_api_key}",
+                    "#{_secret_key}", 
+                    _use_ssl)
+    end
+
     def url
       connection.instance_variable_get(:@api_url)
     end
