@@ -55,6 +55,12 @@ module CloudstackSpec::Resource
         puts "  #{creation_job}"
         return false
       end
+
+      if ! self.template_name.nil?
+        if validate_template_status == false
+          puts "   Template not valid"
+        end
+      end
       begin
         newvm = create_virtual_machine(@name)
         creation_job = newvm['jobid']
@@ -102,6 +108,50 @@ module CloudstackSpec::Resource
 
     private 
 
+      def validate_template_status
+        # if template_name define
+        # make sure the template is ready otherwise, wait.
+        # puts get_template
+        if get_template['isready']
+          template_status = true
+        else
+          until get_template['isready']
+            if get_template['status'].nil?
+              puts "   Template not ready: #{get_template['name']}"
+              puts "   ERROR in CloudStack: status is empty"
+              print "     Template download in progress..."
+              until ! get_template['status'].nil?
+                print '.'
+                sleep 5
+              end # end loop
+            end
+            if get_template['status'].include? "%"
+              puts "   Template not ready: #{get_template['name']}"
+              print "     Template download in progress..."
+              until ! get_template['status'].include? "%"
+                print '.'
+                sleep 5
+              end # end loop
+            elsif get_template['status'].include? "Installing"
+              puts "   Template not ready: #{get_template['name']}"
+              print "     Template is installing..."
+              until ! get_template['status'].include? "Installing"
+                print '.'
+                sleep 5
+              end # end loop
+            else
+              template_status = false
+              break
+            end
+          end # end loop
+          if get_template['isready']
+            template_status = true
+          end
+        end
+        return template_status
+      end
+
+
       def vm
         vm = @connection.list_virtual_machines(name: @name, zoneid: @zone['id'])
         if vm.empty?
@@ -111,6 +161,12 @@ module CloudstackSpec::Resource
           $vm = vm['virtualmachine'].first
           return vm['virtualmachine'].first
         end
+      end
+
+      def get_template
+        tpl = @connection.list_templates(:templatefilter => "featured", id: get_template_id)
+        tpl = tpl['template'].first
+        return tpl
       end
 
       def get_template_id
