@@ -79,7 +79,7 @@ module CloudstackSpec::Resource
     def enable_remote_vpn
       newvpn =  @connection.create_remote_access_vpn(publicipid: publicip_snat_id)
       job_status?(newvpn['jobid'])
-      vpn = @connection.list_remote_access_vpns(id: newvpn['id'])
+      vpn = @connection.list_remote_access_vpns(publicipid: publicip_snat_id)
       vpn = vpn['remoteaccessvpn'].first
       if ! vpn.empty?
         return true
