@@ -1,17 +1,17 @@
 require 'spec_helper'
 
 
-describe vpc('spec-vpc1') do
+describe vpc('spec-vpc2') do
   it { should be_created }
   it { should exist }
   it { should be_reachable }
 
-  describe vpc_tier('tier11') do
+  describe vpc_tier('tier2') do
     it { should be_created }
     it { should exist }
   end
 
-  describe virtual_machine('bling-bling1') do
+  describe virtual_machine('test-vm1') do
     it { should be_created }
      it { should exist }
     it { should be_running }
@@ -23,14 +23,14 @@ describe vpc('spec-vpc1') do
 
 end
 
-describe template_from_snapshot('bling-bling1') do
+describe template_from_snapshot('test-vm1') do
   it { should be_created }
 end
 
 describe virtual_machine('bling-bling2') do
   subject do
     vm_from_template = CloudstackSpec::Resource::VirtualMachine.new('bling-bling2')
-    vm_from_template.template_name << 'bling-bling1'
+    vm_from_template.template_name << 'test-vm1'
     vm_from_template
   end
   it { should be_created }

@@ -12,7 +12,7 @@ describe vpc('spec-vpc1') do
     it { should be_created }
     it { should exist }
 
-    describe virtual_machine('bling-bling1') do
+    describe virtual_machine('vm-test1') do
       it { should be_created }
       it { should_not be_reachable } # internal IP of the VM should not be reachable
       it { should exist }
@@ -22,7 +22,6 @@ describe vpc('spec-vpc1') do
         it { should be_reachable.with( :port => 22, :proto => 'tcp' ) }
       end
     end
-
   end
 end
 

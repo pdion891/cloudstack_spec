@@ -12,16 +12,11 @@ end
   describe system_vm(svm) do
     it { should exist }
     it { should be_running }
-#    it { should be_reachable }
+    it { should be_reachable }
   end
 end
 
-describe template("CentOS 5.6(64-bit) no GUI (XenServer)") do
-  it { should exist }
-  it { should be_ready }
-end
-
-describe template('Ubuntu 14.04 LTS') do
+describe template('CentOS 6.6 base (64bit)') do
   it { should exist }
   it { should be_ready }
 end
@@ -29,9 +24,9 @@ end
 describe vpc('spec-vpc1') do
   it { should be_created }
   it { should exist }
-#  it { should be_ready }
+  it { should be_ready }
   it { should be_reachable }
-#  its(:enable_remote_vpn) { should be_set }
+  its(:enable_remote_vpn) { should be_set }
   its(:remote_vpn_enabled?) { should be }
 
   describe vpc_tier('tier11') do
@@ -48,17 +43,14 @@ describe vpc('spec-vpc1') do
 #    end
     it { should be_running }
     its(:open_pf_ssh) { should be_set }
-  #  it { should be_destroy }
   end
-
   
-#    its(:pf_ssh) { should be_reachable }
 end
 
 #describe template_from_snapshot('bling-bling1') do
 #  it { should be_created }
 #end
-#
+
 #describe virtual_machine('bling-bling2') do
 #  subject do
 #    vm_from_template = CloudstackSpec::Resource::VirtualMachine.new('bling-bling2')

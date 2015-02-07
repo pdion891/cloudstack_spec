@@ -1,6 +1,5 @@
 cloudstack:
-  url:        http://172.16.21.126:8080/client/api
-  api_key:    rkVsYauTGYkR2I0aX3Qmh4s3cfXtR5LNnw7cNKCpHnzKsA-zaXUn7k__fbBga-l0BQl9Qlmq57tkaj67L7W_bg
-  secret_key: dS0grBtPMbg5PTr62VLeApd55p7sU5fObcW-hmGjiUNyBWw67BRPWRJrXQ5OfO0LTzLRdN-pHiDz25K1o3qLeA
+  url:        http://<ip>:8080/client/api
+  api_key:    
+  secret_key: 
   use_ssl:    false
-
