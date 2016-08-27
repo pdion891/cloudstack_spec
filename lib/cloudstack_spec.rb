@@ -1,3 +1,6 @@
+require 'yaml'
+require 'cloudstack_ruby_client'
+require 'uuid'
 require 'rspec'
 require 'rspec/its'
 require 'specinfra'

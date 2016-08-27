@@ -17,7 +17,7 @@ module CloudstackSpec::Resource
     def created?
       if self.exist?
         puts "  Account already exist"
-        return true
+        true
       else
         account = @connection.create_account(
           accounttype: 0,

@@ -3,9 +3,9 @@ module CloudstackSpec::Resource
     # do nothing
     attr_reader :name, :template_name, :zonename
 
-    def initialize(name='rspec-test1', zonename=nil)
+    def initialize(name='rspec-test1', zonename=nil, template_name='')
       @name   = name
-      @template_name = ''
+      @template_name = template_name
       @connection = CloudstackSpec::Helper::Api.new.connection
       @zone = get_zone(zonename)
       @runner = Specinfra::Runner
@@ -53,7 +53,7 @@ module CloudstackSpec::Resource
       if self.exist?
         creation_job = "Already exist" 
         puts "  #{creation_job}"
-        return false
+        false
       end
 
       if ! self.template_name.nil?

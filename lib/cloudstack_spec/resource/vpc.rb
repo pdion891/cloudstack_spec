@@ -2,12 +2,17 @@ module CloudstackSpec::Resource
   class Vpc < Base
     # do nothing
 
-    def initialize(name='rspec-vpc1', zonename=nil)
-      @name   = name
+    def set_defaults
+      @name ||= 'rspec-vpc1'
+    end
+
+    def initialize(params={})
+      params.each { |key, value| instance_variable_set("@#{key}", value) }
+      set_defaults
       @connection = CloudstackSpec::Helper::Api.new.connection
-      @zone = get_zone(zonename)
+      @zone = get_zone(zone_name)
       @runner = Specinfra::Runner
-      #vpc = @connection.list_vpcs(listall: true, name: @name)
+      vpc = @connection.list_vpcs(listall: true, name: @name)
       if vpc.empty?
         @router = nil
       else
@@ -15,13 +20,13 @@ module CloudstackSpec::Resource
       end
       $vpc = vpc
     end
-    
+
     def exist?
-        if vpc.empty?
-          return false
-        else
-          return true
-        end
+      if vpc.empty?
+        return false
+      else
+        return true
+      end
     end
 
     def ready?
@@ -36,7 +41,7 @@ module CloudstackSpec::Resource
           return false
         end
       rescue
-          return false
+        return false
       end
     end
 
@@ -45,18 +50,18 @@ module CloudstackSpec::Resource
       @runner.check_host_is_reachable(ip, port, proto, timeout)
     end
 
-    def created?(cidr='10.10.0.0/22')
+    def created?
       if self.exist?
         puts "  VPC already exist"
         return true
       else
         job = @connection.create_vpc(
-                :name => @name,
-                :displaytext => @name,
-                :cidr => cidr,
-                :vpcofferingid => vpc_offering_id,
-                :zoneid => @zone['id']
-                )
+            :name => @name,
+            :displaytext => @name,
+            :cidr => @cidr,
+            :vpcofferingid => vpc_offering_id(@offering),
+            :zoneid => @zone['id']
+        )
         job_status = job_status?(job['jobid'])
         @router = @connection.list_routers(vpcid: vpc['id'])['router'].first
         $vpc = vpc
@@ -100,40 +105,40 @@ module CloudstackSpec::Resource
 
     private
 
-      def vpc
-        vpc = @connection.list_vpcs(listall: true, name: @name)
-        if vpc.empty?
-          return {}
-        else
-          return vpc['vpc'].first
-        end
+    def vpc
+      vpc = @connection.list_vpcs(listall: true, name: @name)
+      if vpc.empty?
+        return {}
+      else
+        return vpc['vpc'].first
       end
+    end
 
-      def first_vm_id
-        vm = @connection.list_virtual_machines(vpcid: vpc['id'])
-        if vm.empty?
-          return false
-        end
-        vm['virtualmachine'].first['id']
+    def first_vm_id
+      vm = @connection.list_virtual_machines(vpcid: vpc['id'])
+      if vm.empty?
+        return false
       end
+      vm['virtualmachine'].first['id']
+    end
 
-      def first_tier_id
-        net = @connection.list_vpcs(id: vpc['id'])
-        net = net['vpc'].first['network'].first['id']
-        return net
-      end
+    def first_tier_id
+      net = @connection.list_vpcs(id: vpc['id'])
+      net = net['vpc'].first['network'].first['id']
+      return net
+    end
 
-      def publicip_snat_id
-        # get the id of the sourceNAT public IP for the current VPC
-        public_ip = @connection.list_public_ip_addresses(vpcid: vpc['id'], issourcenat: true)
-        public_ip = public_ip['publicipaddress'].first
-        return public_ip['id']
-      end
+    def publicip_snat_id
+      # get the id of the sourceNAT public IP for the current VPC
+      public_ip = @connection.list_public_ip_addresses(vpcid: vpc['id'], issourcenat: true)
+      public_ip = public_ip['publicipaddress'].first
+      return public_ip['id']
+    end
 
-      def vpc_offering_id(offering_name="Default VPC offering")
-        offering = @connection.list_vpc_offerings(name: offering_name)['vpcoffering'].first
-        return offering['id']
-      end
+    def vpc_offering_id(offering_name="Default VPC offering")
+      offering = @connection.list_vpc_offerings(name: offering_name)['vpcoffering'].first
+      return offering['id']
+    end
 
   end
 end
