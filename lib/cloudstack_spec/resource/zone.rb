@@ -1,51 +1,45 @@
-module CloudstackSpec::Resource
-  class Zone < Base
+module CloudstackSpec
+  module  Resource
     # All about zone...
     #####
-    def exist?
-      #zone = @connection.list_zone(:name => name)
-      if @zonename.nil?
-        return false
-      else
-        return true
+    class Zone
+      include Base
+      attr_reader :name
+
+      def initialize(name = 'rspec-zone1')
+#        params.each { |key, value| instance_variable_set("@#{key}", value) }
+        @connection = CloudstackSpec::Helper::Api.new.connection
+        @runner = Specinfra::Runner
+        @zone = get_zone(name)
+        @name = name ? name : @zone['name']
+        $zone = @zone
       end
-    end
 
-    def allocated?
-      if @zonename['allocationstate'] == 'Enabled'
-        return true
-      else
-        return @zonename['allocationstate']
+      def exist?
+        #zone = @connection.list_zone(:name => name)
+        @zone.empty? ? false : true
       end
-    end
 
-    def local_storage
-      return @zonename['localstorageenabled']
-    end
-
-    def security_group
-      return @zonename['securitygroupsenabled']
-    end
-
-    def network_type
-      # return "Basic" or "Advanced"
-      return @zonename['networktype']
-    end
-
-    private
-
-      def this_zone(name)
-        if name.nil?
-          # if zone name not define, thake the first one
-          zone = @connection.list_zones['zone'].first
-          @name = zone['name']
-        else 
-          @name = name
-          zone = @connection.list_zones(:name => name)['zone'].first
+      def allocated?
+        if @zone['allocationstate'] == 'Enabled'
+          true
+        else
+          @zone['allocationstate']
         end
-        return zone
       end
 
-    # end private
+      def local_storage
+        @zone['localstorageenabled']
+      end
+
+      def security_group
+        @zone['securitygroupsenabled']
+      end
+
+      def network_type
+        @zone['networktype']
+      end
+
+    end
   end
 end

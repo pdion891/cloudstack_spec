@@ -1,5 +1,6 @@
 module CloudstackSpec::Resource
-  class Account < Base
+  class Account
+    include Base
     # handle domain objects.
 
     def exist?

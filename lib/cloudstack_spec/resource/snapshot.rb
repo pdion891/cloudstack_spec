@@ -1,5 +1,6 @@
 module CloudstackSpec::Resource
-  class Snapshot < Base
+  class Snapshot
+    include Base
 
     def initialize(name='root_disk')
       @volume_name = name

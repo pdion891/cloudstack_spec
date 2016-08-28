@@ -1,5 +1,6 @@
 module CloudstackSpec::Resource
-  class Project < Base
+  class Project
+    include Base
     # handle domain objects.
 
     def exist?

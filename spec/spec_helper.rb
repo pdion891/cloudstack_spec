@@ -4,9 +4,6 @@
 # loaded once.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
-require 'yaml'
-require 'cloudstack_ruby_client'
-require 'uuid'
 require 'cloudstack_spec'
 require 'rspec/expectations'
 

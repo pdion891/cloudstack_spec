@@ -1,6 +1,13 @@
 require 'spec_helper'
 
-describe vpc('spec-vpc1') do
+vpc = {
+    name: 'testvpc1',
+    offering: "Default VPC offering",
+    cidr: "10.10.0.0/22"
+
+}
+
+describe vpc(vpc) do
   it { should be_created }
   it { should exist }
   it { should be_ready }

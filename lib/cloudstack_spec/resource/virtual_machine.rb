@@ -1,5 +1,6 @@
 module CloudstackSpec::Resource
-  class VirtualMachine < Base
+  class VirtualMachine
+    include Base
     # do nothing
     attr_reader :name, :template_name, :zonename
 

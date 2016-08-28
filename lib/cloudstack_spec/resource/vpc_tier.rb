@@ -1,81 +1,95 @@
-module CloudstackSpec::Resource
-  class VpcTier < Base
-    attr_reader :name
+module CloudstackSpec
+  module Resource
+    ##
+    #
+    # networks tiers inside VPC
+    #
+    # Arguments:
+    #   name:     (string, default='rspec-vpc-tier')
+    #   offering: (string, default='DefaultIsolatedNetworkOfferingForVpcNetworks')
+    #   acl:      (string, default='default_allow')
+    #   gateway:  (string)
+    #   netmask:  (string)
+    #
+    class VpcTier
+      include Base
+      attr_reader :name
 
-    def initialize(name='tier11', zonename=nil)
-      @name   = name
-      @connection = CloudstackSpec::Helper::Api.new.connection
-      @zone = get_zone(zonename)
-      @runner = Specinfra::Runner
-    end
+      def set_defaults
+        @name     ||= 'rspec-vpc-tier'
+        @offering ||= 'DefaultIsolatedNetworkOfferingForVpcNetworks'
+        @acl      ||= 'default_allow'
+      end
 
-    def exist?
-      begin  
-        if !get_tier.empty?
-          return true
+        def initialize(params = {})
+        params.each { |key, value| instance_variable_set("@#{key}", value) }
+        set_defaults
+        @connection = CloudstackSpec::Helper::Api.new.connection
+        @zone = $zone ? $zone : get_zone
+        @runner = Specinfra::Runner
+      end
+
+      def exist?
+        !this_tier.empty? ? true : false
+      end
+
+      def created?
+        if !exist?
+          @connection.create_network(
+            name: @name,
+            displaytext: @name,
+            networkofferingid: offering_id(@offering),
+            zoneid: @zone['id'],
+            vpcid: $vpc['id'],
+            gateway: @gateway,
+            netmask: @netmask,
+            aclid: acl_id(@acl)
+          )
         else
-          return false
+          puts '  already exist'
+          true
         end
-      rescue Exception => e
-        return false
       end
-    end
 
-    def created?
-      unless self.exist?
-        @connection.create_network(
-                    :name => @name, 
-                    :displaytext => @name, 
-                    :networkofferingid => get_offering_id, 
-                    :zoneid => @zone['id'],
-                    :vpcid => $vpc['id'],
-                    :gateway => '10.10.0.1',
-                    :netmask => '255.255.255.0',
-                    :aclid => get_acl_id
-                   )
-      else
-        print "  already exist"
-        return true
-        #return false
+      def destroy?
+        if exist?
+          sleep(5)
+          job = @connection.delete_network(id: this_tier['id'])
+          job_status?(job['jobid'])
+        else
+          puts '  Does not exist'
+          false
+        end
       end
-    end
 
-    def destroy?
-      if self.exist?
-        sleep(5)
-        job = @connection.delete_network(id: get_tier['id'])
-        job_status?(job['jobid'])
-      else
-        puts "  Does not exist"
-        return false
-      end
-    end
+      private
 
-
-    private
-
-      def get_tier
+      def this_tier
         # CloudStack API does not search by name for networks
-        networks = @connection.list_networks(:listall => true, vpcid: $vpc['id'])
+        networks = @connection.list_networks(
+          listall: true,
+          vpcid: $vpc['id']
+        )
         networks = networks['network']
         if networks.nil?
-          return {}
+          {}
         else
           network = networks.select { |net| net['name'] == @name }
-          network = network.first
+          network.first
         end
       end
 
-      def get_offering_id
-        offering = @connection.list_network_offerings(:name => "DefaultIsolatedNetworkOfferingForVpcNetworks")
-        offering = offering["networkoffering"].first
-        return offering['id']
+      def offering_id(name)
+        offering = @connection.list_network_offerings(name: name)
+        offering = offering['networkoffering'].first
+        offering['id']
       end
 
-      def get_acl_id(name='default_allow')
-        acl = @connection.list_network_a_c_l_lists(name: name)
+      def acl_id(name)
+        acl = @connection.list_network_acl_lists(name: name)
         acl = acl['networkacllist'].first
-        return acl['id']
+        acl['id']
       end
+    end
   end
 end

@@ -1,5 +1,6 @@
 module CloudstackSpec::Resource
-  class Domain < Base
+  class Domain
+    include Base
     # handle domain objects.
 
     def initialize(name=nil)

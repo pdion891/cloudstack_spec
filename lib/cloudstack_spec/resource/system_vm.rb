@@ -1,5 +1,6 @@
 module CloudstackSpec::Resource
-  class SystemVm < Base
+  class SystemVm
+    include Base
     # All about system VM...
 
     def initialize(name=nil, zonename=nil)

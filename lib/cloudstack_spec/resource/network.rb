@@ -1,5 +1,6 @@
 module CloudstackSpec::Resource
-  class Network < Base
+  class Network
+    include Base
     # do nothing
     attr_reader :vpcname, :zonename
 

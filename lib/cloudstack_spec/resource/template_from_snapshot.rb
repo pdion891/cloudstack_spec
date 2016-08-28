@@ -1,5 +1,6 @@
 module CloudstackSpec::Resource
-  class TemplateFromSnapshot < Base
+  class TemplateFromSnapshot
+    include Base
     # do nothing
 
     def tpl
